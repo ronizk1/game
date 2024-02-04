@@ -111,8 +111,7 @@
             const power = {
                 x: Math.random() * canvas.width ,
                 y: 0,
-                width: 30,
-                height: 30,
+                radius: 15,
                 speed: 5,
                 type: Math.random() < 0.5 ? 'decrease' : 'increase' // Randomly choose between increase and decrease type
             };
@@ -133,10 +132,35 @@
         function drawPowers() {
             powers.forEach(power => {
                 ctx.beginPath();
-                ctx.fillStyle = power.type === 'increase' ? 'green' : 'yellow';
-                ctx.fillRect(power.x, power.y, power.width, power.height);
+                ctx.fillStyle = power.type === 'increase' ? 'red' : 'green';
+                ctx.arc(power.x, power.y, power.radius, 0, Math.PI * 2);
+                ctx.fill();
                 ctx.closePath();
             });
+        }
+
+        // Function to draw jungle background
+        function drawBackground() {
+            // Draw sky
+            ctx.beginPath();
+            ctx.rect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'skyblue';
+            ctx.fill();
+            ctx.closePath();
+
+            // Draw hills
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            ctx.quadraticCurveTo(canvas.width / 2, canvas.height / 2, canvas.width, canvas.height);
+            ctx.fillStyle = 'green';
+            ctx.fill();
+            ctx.closePath();
+
+            // Draw trees
+            ctx.fillStyle = 'brown';
+            ctx.fillRect(100, canvas.height - 200, 50, 200);
+            ctx.fillRect(250, canvas.height - 250, 50, 250);
+            ctx.fillRect(400, canvas.height - 150, 50, 150);
         }
 
         // Function to update game objects
@@ -179,10 +203,10 @@
 
                 // Check collision with car
                 if (
-                    power.y + power.height > car.y &&
-                    power.y < car.y + car.height &&
-                    power.x + power.width > car.x &&
-                    power.x < car.x + car.width
+                    power.y + power.radius > car.y &&
+                    power.y - power.radius < car.y + car.height &&
+                    power.x + power.radius > car.x &&
+                    power.x - power.radius < car.x + car.width
                 ) {
                     // Apply power effect
                     if (power.type === 'increase') {
@@ -216,7 +240,7 @@
 
         // Function to render everything
         function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBackground();
             drawCar();
             drawMonsters();
             drawPowers();
