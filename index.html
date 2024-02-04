@@ -152,7 +152,7 @@
             ctx.beginPath();
             ctx.moveTo(0, canvas.height);
             ctx.quadraticCurveTo(canvas.width / 2, canvas.height / 2, canvas.width, canvas.height);
-            ctx.fillStyle = 'green';
+            ctx.fillStyle = 'lightgreen';
             ctx.fill();
             ctx.closePath();
 
@@ -264,7 +264,7 @@
         // Increase speed every 10 seconds
         setInterval(() => {
             monsters.forEach(monster => {
-                monster.speed += 0.5;
+                monster.speed += 0.3;
             });
         }, 5000);
     </script>
