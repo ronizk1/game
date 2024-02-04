@@ -3,68 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Monster Escape Game</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+        #score {
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <button onclick="blueAndRed()" id="btn1" style="background-color: blue; color: white;">Change Blue/Red</button>
-    <br>
-    <br>
-    <br>
-    <input type="number" id="buttonCount" placeholder="Enter a number">
-    <button onclick="createButtons()">Create Buttons</button>
-    <div id="buttonContainer"></div>
-    <br>
-    <br>
-    <br>
-    <input type="" id="input">
-    <button onclick="addtolist()">add</button>
-    <button onclick="display()">display</button>
-    <div id="listContainer"></div>
+    <div id="score">Score: 0</div>
+    <canvas id="gameCanvas" width="1830" height="830"></canvas>
 
-<script>
-    let isBlue = true;
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('score');
 
-    const blueAndRed = () => {
-        const button = document.getElementById('btn1');
-        if (isBlue) {
-            button.style.backgroundColor = 'red';
-            button.textContent = 'Change Red/Blue';
-        } else {
-            button.style.backgroundColor = 'blue';
-            button.textContent = 'Change Blue/Red';
+        // Car properties
+        let car = {
+            x: canvas.width / 2,
+            y: canvas.height - 100,
+            width: 120,
+            height: 60,
+            speed: 11
+        };
+
+        // Monster properties
+        let monsters = [];
+
+        // Power properties
+        let powers = [];
+
+        // Score
+        let score = 0;
+
+        // Event listener for keyboard controls
+        document.addEventListener('keydown', keyDownHandler);
+        document.addEventListener('keyup', keyUpHandler);
+
+        let rightPressed = false;
+        let leftPressed = false;
+
+        function keyDownHandler(e) {
+            if (e.key === 'Right' || e.key === 'ArrowRight') {
+                rightPressed = true;
+            } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                leftPressed = true;
+            }
         }
-        isBlue = !isBlue;
-    };
 
-
-    const createButtons = () => {
-        const buttonCountInput = document.getElementById('buttonCount');
-        const buttonContainer = document.getElementById('buttonContainer');
-        const count = parseInt(buttonCountInput.value);
-
-        if (isNaN(count) || count <= 0) {
-            alert("Please enter a valid positive number.");
-            return;
+        function keyUpHandler(e) {
+            if (e.key === 'Right' || e.key === 'ArrowRight') {
+                rightPressed = false;
+            } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                leftPressed = false;
+            }
         }
 
-        buttonContainer.innerHTML = ''; // Clear previous buttons
+        // Function to draw the car
+        function drawCar() {
+            // Car body
+            ctx.beginPath();
+            ctx.rect(car.x, car.y, car.width, car.height);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            ctx.closePath();
 
-        for (let i = 0; i < count; i++) {
-            const button = document.createElement('button');
-            button.textContent = `Button ${i + 1}`;
-            buttonContainer.appendChild(button);
+            // Car windows
+            ctx.beginPath();
+            ctx.rect(car.x + 10, car.y + 5, 20, 15);
+            ctx.rect(car.x + 50, car.y + 5, 20, 15);
+            ctx.fillStyle = 'lightblue';
+            ctx.fill();
+            ctx.closePath();
+
+            // Wheels
+            ctx.beginPath();
+            ctx.arc(car.x + 15, car.y + car.height, 10, 0, Math.PI * 2);
+            ctx.arc(car.x + car.width - 15, car.y + car.height, 10, 0, Math.PI * 2);
+            ctx.fillStyle = 'black';
+            ctx.fill();
+            ctx.closePath();
         }
-    };
 
-    const addtolist = () => {
-        const input = document.getElementById('input');
-        const listContainer = document.getElementById('listContainer');
+        // Function to generate monsters
+        function generateMonsters() {
+            const monster = {
+                x: Math.random() * canvas.width ,
+                y: 0,
+                width: 40,
+                height: 40,
+                speed: 7 + score / 1000 // Increase speed gradually
+            };
+            monsters.push(monster);
+        }
 
+        // Function to generate powers
+        function generatePowers() {
+            const power = {
+                x: Math.random() * canvas.width ,
+                y: 0,
+                radius: 15,
+                speed: 5,
+                type: Math.random() < 0.5 ? 'decrease' : 'increase' // Randomly choose between increase and decrease type
+            };
+            powers.push(power);
+        }
 
+        // Function to draw monsters
+        function drawMonsters() {
+            monsters.forEach(monster => {
+                ctx.beginPath();
+                ctx.fillStyle = 'purple';
+                ctx.fillRect(monster.x, monster.y, monster.width, monster.height);
+                ctx.closePath();
+            });
+        }
 
+        // Function to draw powers
+        function drawPowers() {
+            powers.forEach(power => {
+                ctx.beginPath();
+                ctx.fillStyle = power.type === 'increase' ? 'red' : 'green';
+                ctx.arc(power.x, power.y, power.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.closePath();
+            });
+        }
 
-    }
-</script>
+        // Function to draw jungle background
+        function drawBackground() {
+            // Draw sky
+            ctx.beginPath();
+            ctx.rect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'skyblue';
+            ctx.fill();
+            ctx.closePath();
 
+            // Draw hills
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            ctx.quadraticCurveTo(canvas.width / 2, canvas.height / 2, canvas.width, canvas.height);
+            ctx.fillStyle = 'green';
+            ctx.fill();
+            ctx.closePath();
+
+            // Draw trees
+            ctx.fillStyle = 'brown';
+            ctx.fillRect(100, canvas.height - 200, 50, 200);
+            ctx.fillRect(250, canvas.height - 250, 50, 250);
+            ctx.fillRect(400, canvas.height - 150, 50, 150);
+        }
+
+        // Function to update game objects
+        function update() {
+            // Move the car
+            if (rightPressed && car.x < canvas.width - car.width) {
+                car.x += car.speed;
+            } else if (leftPressed && car.x > 0) {
+                car.x -= car.speed;
+            }
+
+            // Generate monsters more frequently as score increases
+            if (Math.random() < 0.01 + score / 300) {
+                generateMonsters();
+            }
+
+            // Generate powers
+            if (Math.random() < 0.005) {
+                generatePowers();
+            }
+
+            // Move monsters
+            monsters.forEach(monster => {
+                monster.y += monster.speed;
+
+                // Check collision with car
+                if (
+                    monster.y + monster.height > car.y &&
+                    monster.y < car.y + car.height &&
+                    monster.x + monster.width > car.x &&
+                    monster.x < car.x + car.width
+                ) {
+                    endGame();
+                }
+            });
+
+            // Move powers
+            powers.forEach(power => {
+                power.y += power.speed;
+
+                // Check collision with car
+                if (
+                    power.y + power.radius > car.y &&
+                    power.y - power.radius < car.y + car.height &&
+                    power.x + power.radius > car.x &&
+                    power.x - power.radius < car.x + car.width
+                ) {
+                    // Apply power effect
+                    if (power.type === 'increase') {
+                        car.width += 10;
+                        car.height += 10;
+                    } else {
+                        car.width -= 10;
+                        car.height -= 10;
+                    }
+
+                    // Remove the collected power
+                    powers = powers.filter(p => p !== power);
+                }
+            });
+
+            // Remove monsters that have fallen off the screen
+            monsters = monsters.filter(monster => monster.y < canvas.height);
+
+            // Remove powers that have fallen off the screen
+            powers = powers.filter(power => power.y < canvas.height);
+
+            // Update score
+            scoreDisplay.textContent = `Score: ${score}`;
+        }
+
+        // Function to end the game
+        function endGame() {
+            alert('Game Over! Your final score: ' + score);
+            document.location.reload();
+        }
+
+        // Function to render everything
+        function draw() {
+            drawBackground();
+            drawCar();
+            drawMonsters();
+            drawPowers();
+        }
+
+        // Game loop
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game loop
+        gameLoop();
+
+        // Increment score every 10 seconds
+        setInterval(() => {
+            score += 10;
+        }, 4000);
+
+        // Increase speed every 10 seconds
+        setInterval(() => {
+            monsters.forEach(monster => {
+                monster.speed += 0.5;
+            });
+        }, 5000);
+    </script>
 </body>
 </html>
