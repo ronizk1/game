@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Canvas Car</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="800" height="400"></canvas>
+
+<script>
+  // Get the canvas element and its context
+  var canvas = document.getElementById('myCanvas');
+  var ctx = canvas.getContext('2d');
+
+  // Define the car properties
+  var carX = 50; // Initial car x position
+  var carSpeed = 2; // Car speed in pixels per frame
+
+  // Draw the background
+  function drawBackground() {
+    ctx.fillStyle = '#87CEEB'; // Sky blue color
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the ground
+    ctx.fillStyle = '#32CD32'; // Lawn green color
+    ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
+  }
+
+  // Draw the car
+  function drawCar(x, y) {
+    // Body
+    ctx.fillStyle = 'red';
+    ctx.fillRect(x, y - 20, 100, 40);
+
+    // Windows
+    ctx.fillStyle = 'black';
+    ctx.fillRect(x + 10, y - 15, 20, 15);
+    ctx.fillRect(x + 60, y - 15, 20, 15);
+
+    // Wheels
+    ctx.fillStyle = 'black';
+    ctx.beginPath();
+    ctx.arc(x + 25, y + 10, 10, 0, Math.PI * 2, true);
+    ctx.arc(x + 75, y + 10, 10, 0, Math.PI * 2, true);
+    ctx.fill();
+  }
+
+  // Function to draw the scene
+  function drawScene() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw the background
+    drawBackground();
+
+    // Draw the car at its current position
+    drawCar(carX, canvas.height - 50);
+
+    // Update the car position for the next frame
+    carX += carSpeed;
+
+    // Request the next frame
+    requestAnimationFrame(drawScene);
+  }
+
+  // Start the animation
+  drawScene();
+
+</script>
+
+</body>
+</html>

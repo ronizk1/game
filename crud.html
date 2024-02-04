@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student CRUD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+</head>
+<body style="background-color: rgb(243, 207, 225);">
+    <input type="text" id="nameInput" placeholder="Enter name">
+    <br>
+    <br>
+    <input type="number" id="ageInput" placeholder="Enter age">
+    <br>
+    <br>
+    <button onclick="addStudent()" type="button" class="btn btn-outline-dark">Add Student</button>
+    <button onclick="showAllStudents()" type="button" class="btn btn-outline-dark">Show All Students</button>
+    <div id="container"></div>
+
+    
+   
+
+    <script>
+        // Initialize students array from local storage if available
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+
+        const addStudent = () => {
+            const nameInput = document.getElementById('nameInput');
+            const ageInput = document.getElementById('ageInput');
+
+            const name = nameInput.value.trim();
+            const age = parseInt(ageInput.value.trim());
+
+            if (!name || isNaN(age) || age <= 0) {
+                alert('Please enter valid name and age.');
+                return;
+            }
+
+            const student = { name, age };
+            students.push(student);
+            saveToLocalStorage();
+            clearInputs();
+        };
+
+        const showAllStudents = () => {
+            const container = document.getElementById('container');
+            container.innerHTML = '';
+
+            students.forEach((student, index) => {
+                const studentDiv = document.createElement('div');
+                studentDiv.textContent = 
+               `Name: ${student.name}, Age: ${student.age}`
+                  ;
+        
+               
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', () => deleteStudent(index));
+
+                const updateButton = document.createElement('button');
+                updateButton.textContent = 'Update';
+                updateButton.addEventListener('click', () => updateStudent(index));
+
+                studentDiv.appendChild(deleteButton);
+                studentDiv.appendChild(updateButton);
+
+                container.appendChild(studentDiv);
+            });
+        };
+
+
+
+
+        const deleteStudent = (index) => {
+            students.splice(index, 1);
+            saveToLocalStorage();
+            showAllStudents();
+        };
+
+        const updateStudent = (index) => {
+            const newName = prompt('Enter new name:');
+            const newAge = parseInt(prompt('Enter new age:'));
+
+            if (!newName || isNaN(newAge) || newAge <= 0) {
+                alert('Please enter valid name and age.');
+                return;
+            }
+
+            students[index] = { name: newName, age: newAge };
+            saveToLocalStorage();
+            showAllStudents();
+        };
+
+        const saveToLocalStorage = () => {
+            localStorage.setItem('students', JSON.stringify(students));
+        };
+
+        const clearInputs = () => {
+            document.getElementById('nameInput').value = '';
+            document.getElementById('ageInput').value = '';
+        };
+    </script>
+</body>
+</html>

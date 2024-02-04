@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button onclick="blueAndRed()" id="btn1" style="background-color: blue; color: white;">Change Blue/Red</button>
+    <br>
+    <br>
+    <br>
+    <input type="number" id="buttonCount" placeholder="Enter a number">
+    <button onclick="createButtons()">Create Buttons</button>
+    <div id="buttonContainer"></div>
+    <br>
+    <br>
+    <br>
+    <input type="" id="input">
+    <button onclick="addtolist()">add</button>
+    <button onclick="display()">display</button>
+    <div id="listContainer"></div>
+
+<script>
+    let isBlue = true;
+
+    const blueAndRed = () => {
+        const button = document.getElementById('btn1');
+        if (isBlue) {
+            button.style.backgroundColor = 'red';
+            button.textContent = 'Change Red/Blue';
+        } else {
+            button.style.backgroundColor = 'blue';
+            button.textContent = 'Change Blue/Red';
+        }
+        isBlue = !isBlue;
+    };
+
+
+    const createButtons = () => {
+        const buttonCountInput = document.getElementById('buttonCount');
+        const buttonContainer = document.getElementById('buttonContainer');
+        const count = parseInt(buttonCountInput.value);
+
+        if (isNaN(count) || count <= 0) {
+            alert("Please enter a valid positive number.");
+            return;
+        }
+
+        buttonContainer.innerHTML = ''; // Clear previous buttons
+
+        for (let i = 0; i < count; i++) {
+            const button = document.createElement('button');
+            button.textContent = `Button ${i + 1}`;
+            buttonContainer.appendChild(button);
+        }
+    };
+
+    const addtolist = () => {
+        const input = document.getElementById('input');
+        const listContainer = document.getElementById('listContainer');
+
+
+
+
+    }
+</script>
+
+</body>
+</html>
