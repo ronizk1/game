@@ -16,9 +16,15 @@
             text-align: center;
             margin-top: 10px;
         }
+                /* Media queries for smaller screens */
+        @media only screen and (max-width: 600px) {
+            #score {
+                font-size: 18px;
+            }
+        }
     </style>
 </head>
-<body>
+<body style="background-color: rgb(225, 168, 243);">
     <div id="score">Score: 0</div>
     <canvas id="gameCanvas" width="1830" height="830"></canvas>
 
@@ -152,7 +158,7 @@
             ctx.beginPath();
             ctx.moveTo(0, canvas.height);
             ctx.quadraticCurveTo(canvas.width / 2, canvas.height / 2, canvas.width, canvas.height);
-            ctx.fillStyle = 'green';
+            ctx.fillStyle = 'lightgreen';
             ctx.fill();
             ctx.closePath();
 
@@ -212,7 +218,9 @@
                     if (power.type === 'increase') {
                         car.width += 10;
                         car.height += 10;
-                    } else {
+                    } else if(car.width<=50) {
+                    }
+                    else {
                         car.width -= 10;
                         car.height -= 10;
                     }
@@ -234,8 +242,14 @@
 
         // Function to end the game
         function endGame() {
-            alert('Game Over! Your final score: ' + score);
-            document.location.reload();
+            // Remove event listeners to prevent stacking alerts
+            document.removeEventListener('keydown', keyDownHandler);
+            document.removeEventListener('keyup', keyUpHandler);
+        
+            const restart = confirm('Game Over! Your final score: ' + score + '. Restart game?');
+            if (restart) {
+                document.location.reload();
+            }
         }
 
         // Function to render everything
@@ -264,7 +278,7 @@
         // Increase speed every 10 seconds
         setInterval(() => {
             monsters.forEach(monster => {
-                monster.speed += 0.5;
+                monster.speed += 0.3;
             });
         }, 5000);
     </script>
